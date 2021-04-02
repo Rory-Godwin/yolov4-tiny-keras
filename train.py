@@ -299,7 +299,7 @@ if __name__ == "__main__":
     # 调整非主干模型first
     if True:
         Init_epoch = 0
-        Freeze_epoch = 15
+        Freeze_epoch = 30
         batch_size = 32
         learning_rate_base = 1e-3
 
@@ -337,8 +337,8 @@ if __name__ == "__main__":
 
     # 解冻后训练
     if True:
-        Freeze_epoch = 15
-        Epoch = 35
+        Freeze_epoch = 30
+        Epoch = 100
         batch_size = 16
         learning_rate_base = 1e-4
 

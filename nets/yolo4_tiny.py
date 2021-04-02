@@ -46,13 +46,9 @@ def DarknetConv2D_BN_Leaky(*args, **kwargs):
 #######################################################################################
 #######                             RG MOD1                                     #######
 #######                           02/04/2021                                    #######
-#######     OUT     IN                                                          #######
-#######     MOD MOD from YOLO MOD4    ADDED                                     #######
+#######     OUT 66,67     IN                                                          #######
+#######     MOD 61,68,70,71    ADDED                                     #######
 #######################################################################################
-
-#def make_five_convs(x, num_filters):
-    # 五次卷积
-    #x = DarknetConv2D_BN_Leaky(num_filters, (1,1))(x)
     
 def yolo_body(inputs, num_anchors, num_classes):
     #---------------------------------------------------#
@@ -62,17 +58,17 @@ def yolo_body(inputs, num_anchors, num_classes):
     #---------------------------------------------------#
     feat1, feat2 = darknet_body(inputs)
 
-    P5 = DarknetConv2D_BN_Leaky(512, (1,1))(feat2)
+    P5 = DarknetConv2D_BN_Leaky(216, (1,1))(feat2)
    # P5 = DarknetConv2D_BN_Leaky(1024, (3,3))(P5)
     #P5 = DarknetConv2D_BN_Leaky(512, (1,1))(P5)
     # 使用了SPP结构，即不同尺度的最大池化后堆叠。
     maxpool1 = MaxPooling2D(pool_size=(13,13), strides=(1,1), padding='same')(P5)
-    maxpool2 = MaxPooling2D(pool_size=(9,9), strides=(1,1), padding='same')(P5)
-    maxpool3 = MaxPooling2D(pool_size=(5,5), strides=(1,1), padding='same')(P5)
-    P5 = Concatenate()([maxpool1, maxpool2, maxpool3, P5])
+    #maxpool2 = MaxPooling2D(pool_size=(9,9), strides=(1,1), padding='same')(P5)
+    #maxpool3 = MaxPooling2D(pool_size=(5,5), strides=(1,1), padding='same')(P5)
+    P5 = Concatenate()([maxpool1, P5])
     #P5 = DarknetConv2D_BN_Leaky(512, (1,1))(P5)
-    #P5 = DarknetConv2D_BN_Leaky(1024, (3,3))(P5)
-    P5 = DarknetConv2D_BN_Leaky(512, (1,1))(P5)
+    P5 = DarknetConv2D_BN_Leaky(512, (3,3))(P5)
+    P5 = DarknetConv2D_BN_Leaky(256, (1,1))(P5)
 
     # 13,13,512 -> 13,13,256 -> 26,26,256
     P5_upsample = compose(DarknetConv2D_BN_Leaky(256, (1,1)), UpSampling2D(2))(P5)
@@ -81,34 +77,6 @@ def yolo_body(inputs, num_anchors, num_classes):
     # 26,26,256 + 26,26,256 -> 26,26,512
     P4 = Concatenate()([P4, P5_upsample])
     
-    # 26,26,512 -> 26,26,256 -> 26,26,512 -> 26,26,256 -> 26,26,512 -> 26,26,256
-    #P4 = make_five_convs(P4,256)
-
-    # 26,26,256 -> 26,26,128 -> 52,52,128
-    #P4_upsample = compose(DarknetConv2D_BN_Leaky(128, (1,1)), UpSampling2D(2))(P4)
-    # 52,52,256 -> 52,52,128
-    #P3 = DarknetConv2D_BN_Leaky(128, (1,1))(feat1)
-    # 52,52,128 + 52,52,128 -> 52,52,256
-    #P3 = Concatenate()([P3, P4_upsample])
-
-    # 52,52,256 -> 52,52,128 -> 52,52,256 -> 52,52,128 -> 52,52,256 -> 52,52,128
-    #P3 = make_five_convs(P3,128)
-    
-    #---------------------------------------------------#
-    #   第三个特征层
-    #   y3=(batch_size,52,52,3,85)
-    #---------------------------------------------------#
-    #P3_output = DarknetConv2D_BN_Leaky(256, (3,3))(P3)
-    #P3_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1), kernel_initializer=keras.initializers.normal(mean=0.0, stddev=0.01))(P3_output)
-
-    # 52,52,128 -> 26,26,256
-    #P3_downsample = ZeroPadding2D(((1,0),(1,0)))(P3)
-    #P3_downsample = DarknetConv2D_BN_Leaky(256, (3,3), strides=(2,2))(P3_downsample)
-    # 26,26,256 + 26,26,256 -> 26,26,512
-    #P4 = Concatenate()([P3_downsample, P4])
-    # 26,26,512 -> 26,26,256 -> 26,26,512 -> 26,26,256 -> 26,26,512 -> 26,26,256
-    #P4 = make_five_convs(P4,256)
-    
     #---------------------------------------------------#
     #   第二个特征层
     #   y2=(batch_size,26,26,3,85)
@@ -116,19 +84,11 @@ def yolo_body(inputs, num_anchors, num_classes):
     P4_output = DarknetConv2D_BN_Leaky(512, (3,3))(P4)
     P4_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1))(P4_output)
     
-    # 26,26,256 -> 13,13,512
-    #P4_downsample = ZeroPadding2D(((1,0),(1,0)))(P4)
-    #P4_downsample = DarknetConv2D_BN_Leaky(512, (3,3), strides=(2,2))(P4_downsample)
-    # 13,13,512 + 13,13,512 -> 13,13,1024
-    #P5 = Concatenate()([P4_downsample, P5])
-    # 13,13,1024 -> 13,13,512 -> 13,13,1024 -> 13,13,512 -> 13,13,1024 -> 13,13,512
-    #P5 = make_five_convs(P5,512)
-    
     #---------------------------------------------------#
     #   第一个特征层
     #   y1=(batch_size,13,13,3,85)
     #---------------------------------------------------#
-    P5_output = DarknetConv2D_BN_Leaky(1024, (3,3))(P5)
+    P5_output = DarknetConv2D_BN_Leaky(512, (3,3))(P5)
     P5_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1))(P5_output)
     
     return Model(inputs, [P5_output, P4_output])

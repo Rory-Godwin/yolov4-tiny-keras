@@ -6,8 +6,8 @@ import os
 import random 
 random.seed(0)
 
-xmlfilepath=r'A:/yolov4-keras-master/VOCdevkit/VOC2007/Annotations'
-saveBasePath=r"A:/yolov4-keras-master/VOCdevkit/VOC2007/ImageSets/Main/"
+xmlfilepath=r'./VOCdevkit/VOC2007/Annotations'
+saveBasePath=r"./VOCdevkit/VOC2007/ImageSets/Main/"
  
 #----------------------------------------------------------------------#
 #   想要增加测试集修改trainval_percent

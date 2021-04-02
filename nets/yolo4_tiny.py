@@ -114,7 +114,7 @@ def yolo_body(inputs, num_anchors, num_classes):
     #   y2=(batch_size,26,26,3,85)
     #---------------------------------------------------#
     P4_output = DarknetConv2D_BN_Leaky(512, (3,3))(P4)
-    P4_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1), kernel_initializer=keras.initializers.normal(mean=0.0, stddev=0.01))(P4_output)
+    #P4_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1), kernel_initializer=keras.initializers.normal(mean=0.0, stddev=0.01))(P4_output)
     
     # 26,26,256 -> 13,13,512
     #P4_downsample = ZeroPadding2D(((1,0),(1,0)))(P4)
@@ -129,7 +129,7 @@ def yolo_body(inputs, num_anchors, num_classes):
     #   y1=(batch_size,13,13,3,85)
     #---------------------------------------------------#
     P5_output = DarknetConv2D_BN_Leaky(1024, (3,3))(P5)
-    P5_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1), kernel_initializer=keras.initializers.normal(mean=0.0, stddev=0.01))(P5_output)
+    #P5_output = DarknetConv2D(num_anchors*(num_classes+5), (1,1), kernel_initializer=keras.initializers.normal(mean=0.0, stddev=0.01))(P5_output)
     
     return Model(inputs, [P5_output, P4_output])
 

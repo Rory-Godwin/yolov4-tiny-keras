@@ -63,7 +63,7 @@ def yolo_body(inputs, num_anchors, num_classes):
     #P5 = DarknetConv2D_BN_Leaky(512, (1,1))(P5)
     # 使用了SPP结构，即不同尺度的最大池化后堆叠。
     maxpool1 = MaxPooling2D(pool_size=(13,13), strides=(1,1), padding='same')(P5)
-    maxpool2 = MaxPooling2D(pool_size=(9,9), strides=(1,1), padding='same')(P5)
+   # maxpool2 = MaxPooling2D(pool_size=(9,9), strides=(1,1), padding='same')(P5)
     #maxpool3 = MaxPooling2D(pool_size=(5,5), strides=(1,1), padding='same')(P5)
     P5 = Concatenate()([maxpool1, maxpool2, P5])
     #P5 = DarknetConv2D_BN_Leaky(512, (1,1))(P5)

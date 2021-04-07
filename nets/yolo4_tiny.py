@@ -74,7 +74,7 @@ def yolo_body(inputs, num_anchors, num_classes):
     P5_upsample = compose(DarknetConv2D_BN_Leaky(256, (1,1)), UpSampling2D(2))(P5)
     # 26,26,512 -> 26,26,256
     P4 = DarknetConv2D_BN_Leaky(256, (1,1))(feat1)
-    #P4 = DarknetConv2D_BN_Leaky(512, (3,3))(P4)
+    P4 = DarknetConv2D_BN_Leaky(512, (3,3))(P4)
     #P4 = DarknetConv2D_BN_Leaky(256, (1,1))(P4)
     # 26,26,256 + 26,26,256 -> 26,26,512
     P4 = Concatenate()([P4, P5_upsample])

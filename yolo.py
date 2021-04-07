@@ -22,9 +22,9 @@ from utils.utils import letterbox_image
 #--------------------------------------------#
 class YOLO(object):
     _defaults = {
-        "model_path"        : 'model_data/yolov4_tiny_weights_voc.h5',
+        "model_path"        : 'model_data/tiny.h5',
         "anchors_path"      : 'model_data/yolo_anchors.txt',
-        "classes_path"      : 'model_data/voc_classes.txt',
+        "classes_path"      : 'model_data/new_classes.txt',
         "score"             : 0.5,
         "iou"               : 0.3,
         "max_boxes"         : 100,
